@@ -1,0 +1,196 @@
+I"2<p>Connect to the PostgreSQL instance</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>postgres@localhost ~]<span class="nv">$ </span>psql
+psql <span class="o">(</span>11.5<span class="o">)</span>
+Type <span class="s2">"help"</span> <span class="k">for </span>help.
+
+<span class="nv">postgres</span><span class="o">=&gt;</span> 
+</code></pre></div></div>
+
+<p>Create new group</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE GROUP monty_python<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create a new user Graham that belongs to monty_python group and doesn’t inherit any privileges from the group. Allow the user to have maximum 2 active connection.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE USER Graham CONNECTION LIMIT 2 IN ROLE monty_python NOINHERIT<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create a new user Eric that belongs to monty_python group and inherits privileges from the group. Allow the user to have maximum 2 active connection.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE USER Eric CONNECTION LIMIT 2 IN ROLE monty_python INHERIT<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Display all the roles available in the cluster</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\d</span>g
+                                        List of roles
+   Role name    |                         Attributes                         |   Member of
+<span class="nt">----------------</span>+------------------------------------------------------------+----------------
+ eric           | 2 connections                                              | <span class="o">{</span>monty_python<span class="o">}</span>
+ graham         | No inheritance                                            +| <span class="o">{</span>monty_python<span class="o">}</span>
+                | 2 connections                                              |
+ monty_python   | Cannot login                                               | <span class="o">{}</span>
+ postgres       | Superuser, Create role, Create DB, Replication, Bypass RLS | <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>Connect to the quiz database</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\c</span> quiz
+</code></pre></div></div>
+
+<p>Grant all privileges for all tables in schema public to group monty_python</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> GRANT ALL ON ALL TABLES IN SCHEMA public TO monty_python<span class="p">;</span>
+GRANT
+</code></pre></div></div>
+
+<p>In order to be able to switch to another role you need to grant this permission to the current user:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GRANT graham to adminuser<span class="p">;</span>
+GRANT graham to adminuser<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Switch to the Graham user</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO graham<span class="p">;</span>
+SET
+</code></pre></div></div>
+
+<p>Try to check the content of answers table as user Graham</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> TABLE answers<span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+</code></pre></div></div>
+
+<p>Change the user and try to query the table again</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO eric<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> table answers<span class="p">;</span>
+ question_id | answer | is_correct
+<span class="nt">-------------</span>+--------+------------
+           1 | Au     | f
+           1 | O      | t
+           1 | Oxy    | f
+           1 | Tl     | f
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Why user Graham doesn’t have permission to view the content of answer table?</p>
+
+<p>Changing permissions</p>
+
+<p>Grant the SELECT privilege on table answers to user Graham.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> GRANT SELECT ON TABLE answers TO Graham<span class="p">;</span>
+WARNING:  no privileges were granted <span class="k">for</span> <span class="s2">"answers"</span>
+GRANT
+</code></pre></div></div>
+
+<p>Switch back to the superuser account and try again.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO adminuser<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT SELECT ON TABLE answers TO Graham<span class="p">;</span>
+GRANT
+</code></pre></div></div>
+
+<p>Check if user Graham is able to query the table.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> TABLE answers<span class="p">;</span>
+ question_id | answer | is_correct
+<span class="nt">-------------</span>+--------+------------
+           1 | Au     | f
+           1 | O      | t
+           1 | Oxy    | f
+           1 | Tl     | f
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Display all granted privileges.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>p
+                                     Access privileges
+ Schema |   Name    | Type  |       Access privileges       | Column privileges | Policies
+<span class="nt">--------</span>+-----------+-------+-------------------------------+-------------------+----------
+ public | answers   | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres+|                   |
+        |           |       | <span class="nv">graham</span><span class="o">=</span>r/postgres             |                   |
+ public | questions | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres |                   |
+<span class="o">(</span>2 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Granting roles
+As user Graham try to DELETE all records from table answers.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+</code></pre></div></div>
+
+<p>As adminuser copy all privileges from user eric to user graham.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\c</span>
+You are now connected to database <span class="s2">"quiz"</span> as user <span class="s2">"postgres"</span><span class="nb">.</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT eric TO graham <span class="p">;</span>
+GRANT ROLE
+</code></pre></div></div>
+
+<p>As user Graham try to DELETE all records from table answers.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="nb">set </span>role to graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+<span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO adminuser<span class="p">;</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT DELETE ON TABLE answers TO graham<span class="p">;</span>
+GRANT
+<span class="nv">quiz</span><span class="o">=&gt;</span> SET role TO Graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+</code></pre></div></div>
+
+<p>Display permissions granted to objects and information about roles.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>p
+                                     Access privileges
+ Schema |   Name    | Type  |       Access privileges       | Column privileges | Policies
+
+<span class="nt">--------</span>+-----------+-------+-------------------------------+-------------------+---------
+-
+ public | answers   | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres+|                   |
+        |           |       | <span class="nv">graham</span><span class="o">=</span>r/postgres            +|                   |
+        |           |       | <span class="nv">eric</span><span class="o">=</span>d/postgres               |                   |
+ public | questions | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres |                   |
+<span class="o">(</span>2 rows<span class="o">)</span>
+
+<span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>g
+                                           List of roles
+   Role name    |                         Attributes                         |      Member of
+<span class="nt">----------------</span>+------------------------------------------------------------+---------------------
+ eric           | 2 connections                                              | <span class="o">{</span>monty_python<span class="o">}</span>
+ graham         | No inheritance                                            +| <span class="o">{</span>monty_python,eric<span class="o">}</span>
+                | 2 connections                                              |
+ monty_python   | Cannot login                                               | <span class="o">{}</span>
+ postgres       | Superuser, Create role, Create DB, Replication, Bypass RLS | <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>Without INHERIT, membership in another role only grants the ability to SET ROLE to that other role; the privileges of the other role are only available after having done so.</p>
+
+<p>Revoke DELETE privilege from eric.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\c</span>
+You are now connected to database <span class="s2">"quiz"</span> as user <span class="s2">"adminuser"</span><span class="nb">.</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> REVOKE DELETE ON TABLE answers FROM eric<span class="p">;</span>
+REVOKE
+<span class="nv">quiz</span><span class="o">=&gt;</span> <span class="nb">set </span>role to eric<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> delete from answers <span class="p">;</span>
+DELETE 0
+</code></pre></div></div>
+
+<p>As you see user Eric is still able to perform DELETE operation because of his membership in role monty_python.</p>
+:ET

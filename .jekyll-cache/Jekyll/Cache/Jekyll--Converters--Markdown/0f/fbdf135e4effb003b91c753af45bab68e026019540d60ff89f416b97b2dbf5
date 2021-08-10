@@ -1,0 +1,124 @@
+I"�<h3 id="plain-pg_dump">Plain pg_dump</h3>
+<p>Make sure you have sourced the file with libpq variables on your current session:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> .pg_azure
+</code></pre></div></div>
+
+<p>pg_dump like other native postgres utilities is able to use them to connect to your database instance.</p>
+
+<p>Run pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump
+</code></pre></div></div>
+
+<p>Run pg_dump against quiz database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz
+</code></pre></div></div>
+
+<p>You can redirect the output of pg_dump to another program:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz|less
+</code></pre></div></div>
+
+<p>Save the output of pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz <span class="o">&gt;</span> /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Dump only the schema (without any data):</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--schema-only</span> quiz <span class="o">&gt;</span> /tmp/quiz_ddl.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_ddl.plain.dump
+</code></pre></div></div>
+
+<p>You don’t have to each time specify the database name, you can for instance overwrite PGDATABASE variable just for this session:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">PGDATABASE</span><span class="o">=</span>quiz 
+</code></pre></div></div>
+
+<p>Let’s dump only the data:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--data-only</span> <span class="o">&gt;</span> /tmp/quiz_data.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_data.plain.dump
+</code></pre></div></div>
+
+<p>Change the COPY command to INSERT:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--data-only</span> <span class="nt">--inserts</span> <span class="o">&gt;</span> /tmp/quiz_data_insert.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_data_insert.plain.dump
+</code></pre></div></div>
+
+<p>Dump only one table:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--table</span><span class="o">=</span>answers <span class="o">&gt;</span> /tmp/answers.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/answers.plain.dump
+</code></pre></div></div>
+
+<p>Check all the options for pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--help</span>
+</code></pre></div></div>
+
+<h3 id="restore-from-plain-dump">Restore from plain dump</h3>
+<p>Drop database quiz:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dropdb quiz
+</code></pre></div></div>
+
+<p>Recreate it:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>createdb quiz
+</code></pre></div></div>
+
+<p>Restore it from your dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-f</span> /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Watch out for errors!
+You might want to redirect errors to a separate file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-f</span> /tmp/quiz.plain.dump 2&gt; errors.txt
+less errors.txt
+</code></pre></div></div>
+
+<p>Log in to psql and check if everything was properly restored.</p>
+
+<h3 id="directory-format">Directory format</h3>
+<p>Create dump using directory format. That is the only format where you can many parallel jobs to dump your database.</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz <span class="nt">-Fd</span> <span class="nt">-f</span> /tmp/directorydump
+</code></pre></div></div>
+
+<p>Check the content of files in the directory:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zless /tmp/directorydump/<span class="k">*</span>dat.gz
+</code></pre></div></div>
+
+<h3 id="restore-from-directory-format-dump">Restore from directory format dump</h3>
+<p>Drop database quiz:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dropdb quiz
+</code></pre></div></div>
+
+<p>Recreate it:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>createdb quiz
+</code></pre></div></div>
+
+<p>Restore it from your dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_restore <span class="nt">-d</span> quiz /tmp/directorydump
+</code></pre></div></div>
+
+<p>Log in to psql and check if everything was properly restored.</p>
+
+<h3 id="global-objects-dump">Global objects dump</h3>
+<p>Dump logically the whole instance:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dumpall <span class="o">&gt;</span> /tmp/whole_cluster.plain.dump
+less /tmp/whole_cluster.plain.dump
+</code></pre></div></div>
+
+<p>Dump only the global objects:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dumpall <span class="nt">-g</span> <span class="o">&gt;</span> /tmp/globals.plain.dump
+less /tmp/globals.plain.dump
+</code></pre></div></div>
+
+:ET

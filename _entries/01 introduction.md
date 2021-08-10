@@ -1,24 +1,16 @@
 ---
 sectionid: intro
 sectionclass: h1
-title: The Azure PostgreSQL Workshop
-type: nocount
+title: Kurs analityka danych od podstaw
 is-parent: yes
 ---
 
-Welcome to the Azure PostgreSQL Workshop. In this lab, you'll go through tasks that will help you master the basic and more advanced topics required to deploy and operate a PostgreSQL enviroment on [Azure Database for PostgreSQL)](https://azure.microsoft.com/en-us/services/postgresql/). 
+Egzaminy, na które dostaniecie vouchery:
 
-You can use this guide as a PostgreSQL tutorial and as study material to help you get started to learn PostgreSQL.
+1. [Exam AZ-900: Microsoft Azure Fundamentals](https://docs.microsoft.com/en-us/learn/certifications/exams/az-900)
+2. [Exam DA-100: Analyzing Data with Microsoft Power BI](https://docs.microsoft.com/en-us/learn/certifications/exams/da-100)
 
-Some of the things you’ll be going through:
+Po kliknięciu w powyższe linki na dole strony zobaczycie sekcję **Two ways to prepare** z linkami do portalu Microsoft Learn. Jest to kurs, który warto zrobić równolegle z naszym żeby oswoić się z pojęciami i słownictwem używanym podczas kursu a potem łatwiej zdać egzamin.
 
-- Module 1: PostgreSQL overview
-- Module 2: Logical Architecture
-- Module 3: Physical Layout
-- Module 4: Managing Databases
-- Module 5: Backup, Recovery & PiTR
-- Module 6: High availability
-- Module 7: Daemons & Tuning
-- Module 8: SQL characteristic
-- Module 9: Statistics and Query Planning
+
 

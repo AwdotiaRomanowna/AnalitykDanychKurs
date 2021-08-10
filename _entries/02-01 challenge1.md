@@ -2,7 +2,7 @@
 sectionid: deploy
 sectionclass: h2
 title: Deploy Azure Database for PostgreSQL with Azure Portal
-parent-id: upandrunning
+parent-id: azure
 ---
 
 Azure Database for PostgreSQL is a fully-managed database as a service with built-in capabilities, such as high availability and intelligence. 

@@ -1,6 +1,6 @@
 ---
-sectionid: upandrunning
+sectionid: azure
 sectionclass: h1
-title: Getting up and running
+title: Azure
 is-parent: yes
 ---

@@ -1,0 +1,232 @@
+I"2-<p>This section describes the behavior of the PostgreSQL database system when two or more sessions try to access the same data at the same time. The goals in that situation are to allow efficient access for all sessions while maintaining strict data integrity. Every developer of database applications and DBA should be familiar with the topics covered in this chapter.</p>
+
+<p><strong>Task Hints</strong></p>
+<ul>
+  <li>We will use the portal to change the PostgreSQL parameters.</li>
+  <li>Inspect the table size and see the impact of autovacuum.</li>
+</ul>
+
+<h3 id="tasks">Tasks</h3>
+
+<h4 id="inspect-and-change-server-paramerters">Inspect and change server paramerters</h4>
+
+<p>You can list, show, and update configuration parameters for an Azure Database for PostgreSQL server through the Azure portal.</p>
+
+<ul>
+  <li>Go to the Azure PostgreSQL resource</li>
+</ul>
+
+<p><img src="media/mvcc-postgres-server-params-2.png" alt="Go PostgreSQL server parameteres" /></p>
+
+<ul>
+  <li>Change Autovacuum server paramerter to off and <strong>Save</strong></li>
+</ul>
+
+<p><img src="media/mvcc-postgres-autovacuum-off-3.png" alt="Go PostgreSQL server parameteres" /></p>
+
+<p>On <strong>psql</strong> or your faviourt IDE/GUI</p>
+
+<ul>
+  <li>Check if Autovacuum settings</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">AUTOVACUUM</span> <span class="p">;</span>
+
+</code></pre></div></div>
+<p>It should return this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SHOW AUTOVACUUM ;
+  autovacuum
+  ------------
+  off
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Make sure that you have the <em>random_data</em> table</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">drop</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">random_data</span> <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="n">s</span>                    <span class="k">AS</span> <span class="n">first_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()::</span><span class="nb">TEXT</span><span class="p">)</span>      <span class="k">AS</span> <span class="n">second_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="p">)::</span><span class="nb">TEXT</span><span class="p">)</span>  <span class="k">AS</span> <span class="n">third_column</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">500000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>In case you wanted to see the path of the table:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_relation_filepath</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">);</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pg_relation_filepath
+  ----------------------
+  base/14417/16507
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_relation_filepath('random_data');
+  pg_relation_filepath
+  ----------------------
+  base/14417/16507
+  (1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Display the table size:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_relation_size('random_data');
+  pg_relation_size
+  ------------------
+          50569216
+  (1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Display the table size in MB:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  48 MB
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Inserting more records in the <em>random_data</em></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">random_data</span>
+<span class="k">SELECT</span> <span class="n">s</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">),</span>
+       <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; INSERT INTO random_data
+  postgres-&gt; SELECT s,
+  postgres-&gt;        md5(random() :: TEXT),
+  postgres-&gt;        md5((random() / 2) :: TEXT)
+  postgres-&gt; FROM generate_series(1, 1000000) s;
+  INSERT 0 1000000
+  postgres=&gt;
+  postgres=&gt; SELECT count(*) FROM random_data;
+    count
+  ---------
+  1500000
+  (1 row)  
+</code></pre></div></div>
+
+<p>Check the table size after the insersion</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  145 MB
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Notice, that there is a signigcant increase in the table size. Now, delete all the recrods:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELETE</span> <span class="k">from</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; DELETE from random_data;
+  DELETE 1500000
+</code></pre></div></div>
+
+<p>Checking the table size after deletion of the records:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  145 MB
+  (1 row)  
+</code></pre></div></div>
+
+<p>You can see that the table size is still 145 MB, if we started the VACUUM process things would change:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">VACUUM</span> <span class="k">VERBOSE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres=&gt; VACUUM VERBOSE random_data;
+INFO:  vacuuming "public.random_data"
+INFO:  "random_data": removed 1500000 row versions in 18519 pages
+INFO:  "random_data": found 1500000 removable, 0 nonremovable row versions in 18519 out of 18519 pages
+DETAIL:  0 dead row versions cannot be removed yet, oldest xmin: 595
+There were 0 unused item pointers.
+Skipped 0 pages due to buffer pins, 0 frozen pages.
+0 pages are entirely empty.
+CPU: user: 0.25 s, system: 0.00 s, elapsed: 0.23 s.
+INFO:  "random_data": truncated 18519 to 0 pages
+DETAIL:  CPU: user: 0.06 s, system: 0.01 s, elapsed: 0.04 s
+INFO:  vacuuming "pg_toast.pg_toast_16507"
+INFO:  index "pg_toast_16507_index" now contains 0 row versions in 1 pages
+DETAIL:  0 index row versions were removed.
+0 index pages have been deleted, 0 are currently reusable.
+CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s.
+INFO:  "pg_toast_16507": found 0 removable, 0 nonremovable row versions in 0 out of 0 pages
+DETAIL:  0 dead row versions cannot be removed yet, oldest xmin: 596
+There were 0 unused item pointers.
+Skipped 0 pages due to buffer pins, 0 frozen pages.
+0 pages are entirely empty.
+CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s.
+VACUUM
+postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+pg_size_pretty
+----------------
+0 bytes
+(1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Check the table size after applying the Vacuum process:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  0 bytes
+  (1 row)
+</code></pre></div></div>
+:ET

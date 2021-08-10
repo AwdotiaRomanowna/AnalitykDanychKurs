@@ -1,0 +1,227 @@
+I"��<h3 id="explain">EXPLAIN</h3>
+<p>Recreate the random_data table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">random_data</span>
+<span class="k">AS</span>
+<span class="k">SELECT</span> <span class="n">s</span>                           <span class="k">AS</span> <span class="n">first_column</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span>       <span class="k">AS</span> <span class="n">second_column</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span> <span class="k">AS</span> <span class="n">third_column</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Run EXPLAIN command to see what’s the execution plan of ‘SELECT *’ query:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">TABLE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">68</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Check the statistics that Postgres currently has for random_data table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">relpages</span><span class="p">,</span> <span class="n">reltuples</span> <span class="k">FROM</span> <span class="n">pg_class</span> <span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">relpages</span> <span class="o">|</span> <span class="n">reltuples</span>
+<span class="c1">----------+-----------</span>
+        <span class="mi">0</span> <span class="o">|</span>         <span class="mi">0</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Run the VACUUM ANALYZE command against random_data and check the statisctics again:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">VACUUM</span> <span class="k">ANALYSE</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="n">relpages</span><span class="p">,</span> <span class="n">reltuples</span> <span class="k">FROM</span> <span class="n">pg_class</span> <span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">relpages</span> <span class="o">|</span> <span class="n">reltuples</span>
+<span class="c1">----------+-----------</span>
+     <span class="mi">6173</span> <span class="o">|</span>    <span class="mi">500000</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Check the EXPLAIN output again:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">TABLE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Are the numbers more accurate?</p>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                             <span class="n">QUERY</span> <span class="n">PLAN</span>
+<span class="c1">---------------------------------------------------------------------</span>
+ <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11173</span><span class="p">.</span><span class="mi">00</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s calculate the cost as Postgres query planner does:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">relpages</span> <span class="o">*</span> <span class="n">current_setting</span><span class="p">(</span><span class="s1">'seq_page_cost'</span><span class="p">)::</span><span class="nb">numeric</span>
+           <span class="o">+</span> <span class="n">reltuples</span> <span class="o">*</span> <span class="n">current_setting</span><span class="p">(</span><span class="s1">'cpu_tuple_cost'</span><span class="p">)::</span><span class="nb">numeric</span>
+<span class="k">FROM</span> <span class="n">pg_class</span>
+<span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">?</span><span class="k">column</span><span class="o">?</span>
+<span class="c1">----------</span>
+    <span class="mi">11173</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>As you can see that’s the same cost as shown in the EXPLAIN output;</p>
+
+<p>Let’s add a WHERE condition to the query:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">9971</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1940</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8777</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">808</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+        <span class="n">Filter</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s add ANALYZE to EXPLAIN clause:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYSE</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">9971</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1940</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">498</span><span class="p">..</span><span class="mi">727</span><span class="p">.</span><span class="mi">918</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8777</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">808</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">004</span><span class="p">..</span><span class="mi">83</span><span class="p">.</span><span class="mi">350</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Filter</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+        <span class="k">Rows</span> <span class="n">Removed</span> <span class="k">by</span> <span class="n">Filter</span><span class="p">:</span> <span class="mi">166000</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">098</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">728</span><span class="p">.</span><span class="mi">032</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Now not only the plan was shown but also the query was executed.</p>
+
+<p>Create an index and see how the execution plan has changed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">random_data</span><span class="p">(</span><span class="n">first_column</span><span class="p">);</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">012</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">330</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">107</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">421</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Why Index Scan not Index Only Scan was used?</p>
+
+<p>See the execution plan for a selfjoin:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Nested</span> <span class="n">Loop</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">..</span><span class="mi">5543</span><span class="p">.</span><span class="mi">32</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">025</span><span class="p">..</span><span class="mi">3</span><span class="p">.</span><span class="mi">809</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">016</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">422</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+  <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">2</span><span class="p">.</span><span class="mi">78</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">001</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">001</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1999</span><span class="p">)</span>
+        <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">331</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">3</span><span class="p">.</span><span class="mi">928</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Why Nested Loop was used?</p>
+
+<p>Check if planner has chosen the right plan by disabling the nested loop:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">ENABLE_NESTLOOP</span> <span class="k">TO</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1111</span><span class="p">.</span><span class="mi">13</span><span class="p">..</span><span class="mi">10352</span><span class="p">.</span><span class="mi">56</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">965</span><span class="p">..</span><span class="mi">114</span><span class="p">.</span><span class="mi">698</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Hash</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">111</span><span class="p">.</span><span class="mi">13</span><span class="p">..</span><span class="mi">9156</span><span class="p">.</span><span class="mi">86</span> <span class="k">rows</span><span class="o">=</span><span class="mi">815</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">35</span><span class="p">.</span><span class="mi">316</span><span class="p">..</span><span class="mi">67</span><span class="p">.</span><span class="mi">464</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Hash</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">random_data</span><span class="p">.</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8256</span><span class="p">.</span><span class="mi">33</span> <span class="k">rows</span><span class="o">=</span><span class="mi">208333</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">011</span><span class="p">..</span><span class="mi">38</span><span class="p">.</span><span class="mi">918</span> <span class="k">rows</span><span class="o">=</span><span class="mi">166667</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Hash</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">786</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">787</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="n">Buckets</span><span class="p">:</span> <span class="mi">2048</span>  <span class="n">Batches</span><span class="p">:</span> <span class="mi">1</span>  <span class="n">Memory</span> <span class="k">Usage</span><span class="p">:</span> <span class="mi">216</span><span class="n">kB</span>
+              <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">038</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">442</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                    <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">219</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">114</span><span class="p">.</span><span class="mi">823</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Disable also Hash Joins:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">ENABLE_HASHJOIN</span> <span class="k">TO</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">85</span><span class="p">..</span><span class="mi">11896</span><span class="p">.</span><span class="mi">00</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">446</span><span class="p">..</span><span class="mi">287</span><span class="p">.</span><span class="mi">762</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Merge</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">..</span><span class="mi">10700</span><span class="p">.</span><span class="mi">30</span> <span class="k">rows</span><span class="o">=</span><span class="mi">815</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">13</span><span class="p">.</span><span class="mi">313</span><span class="p">..</span><span class="mi">16</span><span class="p">.</span><span class="mi">500</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Merge</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">random_data</span><span class="p">.</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">10079</span><span class="p">.</span><span class="mi">76</span> <span class="k">rows</span><span class="o">=</span><span class="mi">208333</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">12</span><span class="p">.</span><span class="mi">803</span><span class="p">..</span><span class="mi">12</span><span class="p">.</span><span class="mi">873</span> <span class="k">rows</span><span class="o">=</span><span class="mi">667</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">085</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">552</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">255</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">287</span><span class="p">.</span><span class="mi">901</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Which algorithm was the fastest for this query and why?</p>
+
+<h3 id="work_mem-setting">work_mem Setting</h3>
+<p>Run EXPLAIN command to see what’s the execution plan of the SELECT query that requires sorting:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYSE</span> <span class="k">SELECT</span> <span class="n">second_column</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="mi">1</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sort</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">73824</span><span class="p">.</span><span class="mi">53</span><span class="p">..</span><span class="mi">75136</span><span class="p">.</span><span class="mi">30</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">10705</span><span class="p">.</span><span class="mi">361</span><span class="p">..</span><span class="mi">14201</span><span class="p">.</span><span class="mi">555</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Sort</span> <span class="k">Key</span><span class="p">:</span> <span class="n">second_column</span> <span class="k">DESC</span>
+  <span class="n">Sort</span> <span class="k">Method</span><span class="p">:</span> <span class="k">external</span> <span class="n">merge</span>  <span class="n">Disk</span><span class="p">:</span> <span class="mi">21096</span><span class="n">kB</span>
+  <span class="o">-&gt;</span>  <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">018</span><span class="p">..</span><span class="mi">808</span><span class="p">.</span><span class="mi">240</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">087</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">14378</span><span class="p">.</span><span class="mi">488</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>As you see external merge was used as a sort method. It means that your data were sorted on the disk. This is because work_mem value was to small to sort the data in memory.</p>
+
+<p>Check the current value of work_mem:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">work_mem</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>How much memory do you need to sort the data in RAM?</p>
+
+<p>You can change the work_mem value just for the session to try it out. Set the proper value and try to rerun the query.</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">work_mem</span> <span class="o">=</span> <span class="s1">'10MB'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>After chosing the right work_mem value you will see that execution plan has changed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sort</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">61270</span><span class="p">.</span><span class="mi">03</span><span class="p">..</span><span class="mi">62581</span><span class="p">.</span><span class="mi">80</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">11884</span><span class="p">.</span><span class="mi">004</span><span class="p">..</span><span class="mi">12146</span><span class="p">.</span><span class="mi">057</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Sort</span> <span class="k">Key</span><span class="p">:</span> <span class="n">second_column</span> <span class="k">DESC</span>
+  <span class="n">Sort</span> <span class="k">Method</span><span class="p">:</span> <span class="n">quicksort</span>  <span class="n">Memory</span><span class="p">:</span> <span class="mi">51351</span><span class="n">kB</span>
+  <span class="o">-&gt;</span>  <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">013</span><span class="p">..</span><span class="mi">579</span><span class="p">.</span><span class="mi">455</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">051</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">12206</span><span class="p">.</span><span class="mi">274</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Now quicksort Memory was used instead of external merge. Why more memory is needed for the same sort operation in memory than on the disk?</p>
+
+:ET

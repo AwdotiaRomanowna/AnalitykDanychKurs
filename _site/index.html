@@ -1,0 +1,1566 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+<title>Kurs analityka danych od podstaw</title>
+<meta name="viewport" content="width=device-width">
+<meta name="author" content="Microsoft">
+<link rel="stylesheet" href="css/main.css">
+<link href='https://fonts.googleapis.com/css?family=Source+Code+Pro:500,600' rel='stylesheet' type='text/css'>
+<link href='https://c.s-microsoft.com/mscc/statics/mscc-0.4.1.min.css' rel='stylesheet' type='text/css'>
+
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="css/github-markdown.css">
+
+<script src="js/jquery-2.1.1.min.js"></script>
+<script src="https://c.s-microsoft.com/mscc/statics/mscc-0.4.1.min.js"></script>
+<!-- Place this tag in your head or just before your close body tag. -->
+<script async defer src="https://buttons.github.io/buttons.js"></script>
+<script type="text/javascript">
+  function loadJS(url, implementationCode, location){
+    var scriptTag = document.createElement('script');
+    scriptTag.src = url;
+
+    scriptTag.onload = implementationCode;
+    scriptTag.onreadystatechange = implementationCode;
+
+    location.appendChild(scriptTag);
+  }
+
+  function initAWA() {
+    var config = {
+      useDefaultContentName: true,
+      useBeacon: true,
+      useShortNameForContentBlob: true,
+      debounceMs: {
+          scroll: 300,
+          resize: 3000
+      },
+      autoCapture: {
+          pageView: true,
+          scroll: true,
+          lineage: true
+      },
+      coreData: {
+          appId: "AKSWorkshop"
+      }
+    };
+    awa.init(config);
+  }
+
+  function addTelemetryTag() {
+    var appInsights=window.appInsights||function(a){
+    function b(a){c[a]=function(){var b=arguments;c.queue.push(function(){c[a].apply(c,b)})}}var c={config:a},d=document,e=window;setTimeout(function(){var b=d.createElement("script");b.src=a.url||"https://az416426.vo.msecnd.net/scripts/a/ai.0.js",d.getElementsByTagName("script")[0].parentNode.appendChild(b)});try{c.cookie=d.cookie}catch(a){}c.queue=[];for(var f=["Event","Exception","Metric","PageView","Trace","Dependency"];f.length;)b("track"+f.pop());if(b("setAuthenticatedUserContext"),b("clearAuthenticatedUserContext"),b("startTrackEvent"),b("stopTrackEvent"),b("startTrackPage"),b("stopTrackPage"),b("flush"),!a.disableExceptionTracking){f="onerror",b("_"+f);var g=e[f];e[f]=function(a,b,d,e,h){var i=g&&g(a,b,d,e,h);return!0!==i&&c["_"+f](a,b,d,e,h),i}}return c
+    }({
+        instrumentationKey:"0e90ab6f-79ee-466b-a1e7-fe469a0767da"
+    });
+    window.appInsights=appInsights,appInsights.queue&&0===appInsights.queue.length&&appInsights.trackPageView();
+
+    loadJS("https://az725175.vo.msecnd.net/scripts/jsll-4.js",initAWA,document.head);
+  }
+
+  // mscc will only exist if written by the server
+  if (typeof(mscc) === 'undefined' || mscc.hasConsent()) {
+    addTelemetryTag();
+  } else {
+    mscc.on('consent', addTelemetryTag);
+  }
+
+  
+  $(document).ready(function(){
+    $('a').each(function(i, oldHref){
+      if(oldHref.href.includes("docs.microsoft.com") || oldHref.href.includes("azure.microsoft.com")) {
+        if(oldHref.href.includes("?"))
+          $(this).attr('href',oldHref + "&wt.mc_id=apgworkshop");
+        else
+          $(this).attr('href',oldHref + "?wt.mc_id=apgworkshop");
+      }
+    });
+  });
+
+  </script>
+
+</head>
+
+<body>
+    <style> html{display:none;} </style>
+    <script>
+       if(self == top) {
+           document.documentElement.style.display = 'block'; 
+       } else {
+           top.location = self.location; 
+       }
+    </script>
+
+    <div class="container">
+        <div class="overview">
+            <span class="toggle">close</span>
+            <header class="header">
+
+</header>
+
+            <ul id="nav">
+    
+    
+    <li  class="parent current">
+        <a href="#azure">Azure</a>
+        
+            <ul>
+                
+                
+                    <li >
+                        <a href="#deploy">Deploy Azure Database for PostgreSQL with Azure Portal</a>
+                        
+                    </li>
+                
+            </ul>
+        
+    </li>
+    
+    <li  class="parent">
+        <a href="#sql">SQL</a>
+        
+            <ul>
+                
+                
+            </ul>
+        
+    </li>
+    
+    <li  class="parent">
+        <a href="#powerbi">Power BI</a>
+        
+            <ul>
+                
+                
+            </ul>
+        
+    </li>
+    
+    <li  class="parent">
+        <a href="#intro">Kurs analityka danych od podstaw</a>
+        
+            <ul>
+                
+                
+                    <li >
+                        <a href="#appoverview">Application Overview</a>
+                        
+                    </li>
+                
+                    <li >
+                        <a href="#prereq">Prerekwizyty</a>
+                        
+                    </li>
+                
+            </ul>
+        
+    </li>
+    
+    <li>
+      <a class="parent" href="https://privacy.microsoft.com">Privacy &amp; cookies</a>
+    </li>
+</ul>
+<div id="github-actions">
+
+</div>
+
+<p id="copyright-notice">
+  Azure® is a registered trademark of Microsoft Corporation.
+</p>
+
+        </div>
+
+        <div id="consent-container"></div>
+        
+        <div class="content">
+            <span class="toggle">open</span>
+            <article class="markdown-body">
+                
+
+    
+        <section id="intro" class="h1">
+            
+                    
+                    <h1>Kurs analityka danych od podstaw</h1>
+                    
+                
+
+            <p>Egzaminy, na które dostaniecie vouchery:</p>
+
+<ol>
+  <li><a href="https://docs.microsoft.com/en-us/learn/certifications/exams/az-900">Exam AZ-900: Microsoft Azure Fundamentals</a></li>
+  <li><a href="https://docs.microsoft.com/en-us/learn/certifications/exams/da-100">Exam DA-100: Analyzing Data with Microsoft Power BI</a></li>
+</ol>
+
+<p>Po kliknięciu w powyższe linki na dole strony zobaczycie sekcję <strong>Two ways to prepare</strong> z linkami do portalu Microsoft Learn. Jest to kurs, który warto zrobić równolegle z naszym żeby oswoić się z pojęciami i słownictwem używanym podczas kursu a potem łatwiej zdać egzamin.</p>
+
+
+        </section>
+    
+
+    
+        <section id="prereq" class="h2">
+            
+                    <h2>Prerekwizyty</h2>
+                
+
+            <p>Będziesz potrzebować bezpłatnego konta na Azure. <a href="https://azure.microsoft.com/pl-pl/free/">Możesz je założyć tutaj.</a></p>
+
+        </section>
+    
+
+    
+        <section id="appoverview" class="h2">
+            
+                    <h2>Application Overview</h2>
+                
+
+            <p>You will be deploying the Apache Superset application which is fast, lightweight, intuitive, and loaded with options that make it easy for users of all skill sets to explore and visualize their data, from simple line charts to highly detailed geospatial charts.that is containerized and is architected for a microservice implementation.</p>
+
+<p><img src="media/overview.png" alt="Application diagram" /></p>
+
+
+        </section>
+    
+
+    
+        <section id="azure" class="h1">
+            
+                    
+                    <h1>Azure</h1>
+                    
+                
+
+            
+
+        </section>
+    
+
+    
+        <section id="deploy" class="h2">
+            
+                    <h2>Deploy Azure Database for PostgreSQL with Azure Portal</h2>
+                
+
+            <p>Azure Database for PostgreSQL is a fully-managed database as a service with built-in capabilities, such as high availability and intelligence.</p>
+
+<h3 id="tasks">Tasks</h3>
+
+<ul>
+  <li>Use <a href="https://docs.microsoft.com/en-us/azure/azure-resource-manager/management/overview">Azure Resource Manager</a> to deploy Azure Database for PostgreSQL - single server.</li>
+  <li>Use <a href="https://docs.microsoft.com/en-us/azure/cloud-shell/overview">Azure Cloud Shell</a> to connected to the created database instance.</li>
+</ul>
+
+<h4 id="setup-database">Setup Database</h4>
+
+<p><strong>Deploy DB using ARM</strong></p>
+
+<p>Deploy Azure Database for PostgreSQL, which is managed service that you can use to run, manage, and scale in the cloud.</p>
+
+<!-- Begin collapsible container div -->
+<div class="collapsible-content-container">
+  <!-- Begin collapsible container button -->
+  <button class="toggle-collapsible">Toggle solution</button>
+  <!-- Begin collapsible container content div -->
+  <div class="collapsible-content">
+    <!-- Begin parsedText -->
+    
+<ul>
+  <li>If your environment meets the prerequisites and you’re familiar with using ARM templates, <a href="https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2FAzure%2Fazure-quickstart-templates%2Fmaster%2Fquickstarts%2Fmicrosoft.dbforpostgresql%2Fmanaged-postgresql-with-vnet%2Fazuredeploy.json">follow this link and a template will open in the Azure portal</a>.</li>
+</ul>
+
+<p><img src="media/create-azure-db-pg.png" alt="Create Azure DB" /></p>
+
+<ul>
+  <li>
+    <p>Continue to the next page by clicking <strong>Review + create</strong></p>
+  </li>
+  <li>
+    <p>The review page should look like the following:</p>
+  </li>
+</ul>
+
+<p><img src="media/review-pg-create.png" alt="Review Azure DB" /></p>
+
+
+    <!-- End parsedText -->
+  </div>
+  <!-- End collapsible container content div -->
+</div>
+<!-- End collapsible container div -->
+
+
+        </section>
+    
+
+    
+        <section id="api" class="h2">
+            
+                    <h2>Connecting to PostgreSQL</h2>
+                
+
+            <p>In order to connect to a database you need to know the name of your target database, the host name and port number of the server, and what user name you want to connect as. <strong>psql</strong> can be told about those parameters via command line options, namely -d, -h, -p, and -U respectively. If an argument is found that does not belong to any option it will be interpreted as the database name (or the user name, if the database name is already given). Not all of these options are required; there are useful defaults. If you omit the host name, psql will connect via a Unix-domain socket to a server on the local host, or via TCP/IP to localhost on machines that don’t have Unix-domain sockets. The default port number is determined at compile time. Since the database server uses the same default, you will not have to specify the port in most cases. The default user name is your operating-system user name, as is the default database name.
+When the defaults aren’t quite right, you can save yourself some typing by setting the environment variables PGDATABASE, PGHOST, PGPORT and/or PGUSER to appropriate values. It is also convenient to have a ~/.pgpass file to avoid regularly having to type in passwords.</p>
+
+<h3 id="basic-psql-options">Basic psql options</h3>
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>-d dbname
+--dbname=dbname
+    Specifies the name of the database to connect to. This is equivalent to specifying dbname as the first non-option argument on the command line.
+
+-h hostname
+--host=hostname
+    Specifies the host name of the machine on which the server is running.
+
+-p port
+--port=port
+    Specifies the TCP port or the local Unix-domain socket file extension on which the server is listening for connections. Defaults to the value of the PGPORT environment variable or, if not set, to the port specified at compile time, usually **5432**.
+
+-U username
+--username=username
+    Connect to the database as the user username instead of the default. (You must have permission to do so, of course.)
+-W
+   --password
+    Force psql to prompt for a password before connecting to a database.
+</code></pre></div></div>
+
+<p><strong>Using Azure Cloud Shell</strong></p>
+
+<p>Example (Please change these values to match with your setup)</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-U</span> adminuser@postgresql-db <span class="nt">-h</span> postgresql-db.postgres.database.azure.com postgres
+
+</code></pre></div></div>
+
+<h3 id="getting-the-connection-string-from-azure-portal">Getting the connection string from Azure Portal</h3>
+<p>In this task, we will create a file in our Cloud Shell containing <a href="https://www.postgresql.org/docs/current/libpq-envars.html">libpq environment variables</a> that will be used to select default connection parameter values to PostgreSQL PaaS instance. These are useful to be able to connect to postgres in a fast and convenient way without hard-coding connection string.</p>
+
+<p>Go to the “Connection Strings” tab on the left hand side of the Azure Portal and find <strong>psql</strong> connection string:</p>
+
+<p><a href="media/connectionString.png" target="_blank"><img src="media/connectionString.png" style="width:800px" /></a></p>
+
+<p>Open Cloud Shell and create a new <em>.pg_azure</em> file using your favourite editor (if you are not compfortable with Vim you can use VSCode):</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>vi .pg_azure
+</code></pre></div></div>
+
+<p>Add the following parameters:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">PGDATABASE</span><span class="o">=</span>postgres
+<span class="nb">export </span><span class="nv">PGHOST</span><span class="o">=</span>HOSTNAME.postgres.database.azure.com
+<span class="nb">export </span><span class="nv">PGUSER</span><span class="o">=</span>your_user@hostname
+<span class="nb">export </span><span class="nv">PGPASSWORD</span><span class="o">=</span>your_password
+<span class="nb">export </span><span class="nv">PGSSLMODE</span><span class="o">=</span>require
+</code></pre></div></div>
+
+<p>You might use <strong>VSCode</strong> instead of *Vim**</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>wget https://storageaccounthol.z6.web.core.windows.net/scripts/pg_azure <span class="nt">-O</span> .pg_azure
+</code></pre></div></div>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>code .pg_azure
+</code></pre></div></div>
+
+<p>Once the code pane opens, modify the paramerts to match with your setup, press <strong>“CTRL+s”</strong> to save the configuration file.</p>
+
+<p>Read the content of the file in the current session:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> .pg_azure
+</code></pre></div></div>
+
+<p>If you closed this bash session, you won’t be able to login again to psql without reading .pg_azure.</p>
+
+<p>Let’s connect to our Azure database with psql client:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql
+</code></pre></div></div>
+
+<p><a href="media/ex03_libpq.gif" target="_blank"><img src="media/ex03_libpq.gif" style="width:800px" /></a></p>
+
+<p><strong>Task Hints</strong>
+You can also use the connection string shown in the Azure Portal in the Connection String tab. Using libpq variables is another option to ease your work with Postgres.</p>
+
+<p>While you have the psql connected to the database, let’s run some quries:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">version</span><span class="p">();</span>
+</code></pre></div></div>
+<p>You should be able to read the PostgreSQL version.</p>
+
+<p>Create table with some random data:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">random_data</span> <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="n">s</span>                    <span class="k">AS</span> <span class="n">first_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()::</span><span class="nb">TEXT</span><span class="p">)</span>      <span class="k">AS</span> <span class="n">second_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="p">)::</span><span class="nb">TEXT</span><span class="p">)</span>  <span class="k">AS</span> <span class="n">third_column</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">500000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Let’s select some of the records that we generated:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">LIMIT</span> <span class="mi">10</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">random_data</span><span class="p">;</span>
+
+</code></pre></div></div>
+
+        </section>
+    
+
+    
+        <section id="db" class="h2">
+            
+                    <h2>Multiversion Concurrency Control, MVCC</h2>
+                
+
+            <p>This section describes the behavior of the PostgreSQL database system when two or more sessions try to access the same data at the same time. The goals in that situation are to allow efficient access for all sessions while maintaining strict data integrity. Every developer of database applications and DBA should be familiar with the topics covered in this chapter.</p>
+
+<p><strong>Task Hints</strong></p>
+<ul>
+  <li>We will use the portal to change the PostgreSQL parameters.</li>
+  <li>Inspect the table size and see the impact of autovacuum.</li>
+</ul>
+
+<h3 id="tasks">Tasks</h3>
+
+<h4 id="inspect-and-change-server-paramerters">Inspect and change server paramerters</h4>
+
+<p>You can list, show, and update configuration parameters for an Azure Database for PostgreSQL server through the Azure portal.</p>
+
+<ul>
+  <li>Go to the Azure PostgreSQL resource</li>
+</ul>
+
+<p><img src="media/mvcc-postgres-server-params-2.png" alt="Go PostgreSQL server parameteres" /></p>
+
+<ul>
+  <li>Change Autovacuum server paramerter to off and <strong>Save</strong></li>
+</ul>
+
+<p><img src="media/mvcc-postgres-autovacuum-off-3.png" alt="Go PostgreSQL server parameteres" /></p>
+
+<p>On <strong>psql</strong> or your faviourt IDE/GUI</p>
+
+<ul>
+  <li>Check if Autovacuum settings</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">AUTOVACUUM</span> <span class="p">;</span>
+
+</code></pre></div></div>
+<p>It should return this:</p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SHOW AUTOVACUUM ;
+  autovacuum
+  ------------
+  off
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Make sure that you have the <em>random_data</em> table</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">drop</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">random_data</span> <span class="k">AS</span>
+<span class="k">SELECT</span> <span class="n">s</span>                    <span class="k">AS</span> <span class="n">first_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()::</span><span class="nb">TEXT</span><span class="p">)</span>      <span class="k">AS</span> <span class="n">second_column</span><span class="p">,</span>
+   <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span><span class="o">/</span><span class="mi">2</span><span class="p">)::</span><span class="nb">TEXT</span><span class="p">)</span>  <span class="k">AS</span> <span class="n">third_column</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">500000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>In case you wanted to see the path of the table:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_relation_filepath</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">);</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  pg_relation_filepath
+  ----------------------
+  base/14417/16507
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_relation_filepath('random_data');
+  pg_relation_filepath
+  ----------------------
+  base/14417/16507
+  (1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Display the table size:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_relation_size('random_data');
+  pg_relation_size
+  ------------------
+          50569216
+  (1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Display the table size in MB:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  48 MB
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Inserting more records in the <em>random_data</em></p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">random_data</span>
+<span class="k">SELECT</span> <span class="n">s</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">),</span>
+       <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1000000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; INSERT INTO random_data
+  postgres-&gt; SELECT s,
+  postgres-&gt;        md5(random() :: TEXT),
+  postgres-&gt;        md5((random() / 2) :: TEXT)
+  postgres-&gt; FROM generate_series(1, 1000000) s;
+  INSERT 0 1000000
+  postgres=&gt;
+  postgres=&gt; SELECT count(*) FROM random_data;
+    count
+  ---------
+  1500000
+  (1 row)  
+</code></pre></div></div>
+
+<p>Check the table size after the insersion</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>
+<span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  145 MB
+  (1 row)
+
+  postgres=&gt;
+</code></pre></div></div>
+
+<p>Notice, that there is a signigcant increase in the table size. Now, delete all the recrods:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DELETE</span> <span class="k">from</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; DELETE from random_data;
+  DELETE 1500000
+</code></pre></div></div>
+
+<p>Checking the table size after deletion of the records:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  145 MB
+  (1 row)  
+</code></pre></div></div>
+
+<p>You can see that the table size is still 145 MB, if we started the VACUUM process things would change:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">VACUUM</span> <span class="k">VERBOSE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>postgres=&gt; VACUUM VERBOSE random_data;
+INFO:  vacuuming "public.random_data"
+INFO:  "random_data": removed 1500000 row versions in 18519 pages
+INFO:  "random_data": found 1500000 removable, 0 nonremovable row versions in 18519 out of 18519 pages
+DETAIL:  0 dead row versions cannot be removed yet, oldest xmin: 595
+There were 0 unused item pointers.
+Skipped 0 pages due to buffer pins, 0 frozen pages.
+0 pages are entirely empty.
+CPU: user: 0.25 s, system: 0.00 s, elapsed: 0.23 s.
+INFO:  "random_data": truncated 18519 to 0 pages
+DETAIL:  CPU: user: 0.06 s, system: 0.01 s, elapsed: 0.04 s
+INFO:  vacuuming "pg_toast.pg_toast_16507"
+INFO:  index "pg_toast_16507_index" now contains 0 row versions in 1 pages
+DETAIL:  0 index row versions were removed.
+0 index pages have been deleted, 0 are currently reusable.
+CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s.
+INFO:  "pg_toast_16507": found 0 removable, 0 nonremovable row versions in 0 out of 0 pages
+DETAIL:  0 dead row versions cannot be removed yet, oldest xmin: 596
+There were 0 unused item pointers.
+Skipped 0 pages due to buffer pins, 0 frozen pages.
+0 pages are entirely empty.
+CPU: user: 0.00 s, system: 0.00 s, elapsed: 0.00 s.
+VACUUM
+postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+pg_size_pretty
+----------------
+0 bytes
+(1 row)
+</code></pre></div></div>
+
+<ul>
+  <li>Check the table size after applying the Vacuum process:</li>
+</ul>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="k">SELECT</span> <span class="n">pg_size_pretty</span><span class="p">(</span><span class="n">pg_relation_size</span><span class="p">(</span><span class="s1">'random_data'</span><span class="p">));</span>
+</code></pre></div></div>
+
+<p><em>Output</em></p>
+
+<div class="language-plaintext highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  postgres=&gt; SELECT pg_size_pretty(pg_relation_size('random_data'));
+  pg_size_pretty
+  ----------------
+  0 bytes
+  (1 row)
+</code></pre></div></div>
+
+        </section>
+    
+
+    
+        <section id="frontend" class="h2">
+            
+                    <h2>psql — PostgreSQL interactive terminal</h2>
+                
+
+            <p>psql is a terminal-based front-end to PostgreSQL. It enables you to type in queries interactively, issue them to PostgreSQL, and see the query results. Alternatively, input can be from a file or from command line arguments. In addition, psql provides a number of meta-commands and various shell-like features to facilitate writing scripts and automating a wide variety of tasks.
+Anything you enter in psql that begins with an <strong>unquoted backslash</strong> (\) is a psql meta-command that is processed by psql itself. These commands make psql more useful for administration or scripting. Meta-commands are often called slash or backslash commands. The format of a psql command is the backslash, followed immediately by a command verb, then any arguments. The arguments are separated from the command verb and each other by any number of whitespace characters.</p>
+
+<p>List the databases in the cluster:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\l</span>
+</code></pre></div></div>
+
+<p>List the databases in the cluster with their sizes:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\l</span>+
+</code></pre></div></div>
+
+<p>Copy and paste following statements:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">DATABASE</span> <span class="n">quiz</span><span class="p">;</span>
+<span class="err">\</span><span class="k">connect</span> <span class="n">quiz</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span> <span class="p">(</span>
+    <span class="n">question_id</span> <span class="nb">serial</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">answer</span> <span class="nb">text</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">is_correct</span> <span class="nb">boolean</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="k">FALSE</span>
+<span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="k">public</span><span class="p">.</span><span class="n">questions</span> <span class="p">(</span>
+    <span class="n">question_id</span> <span class="nb">integer</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">question</span> <span class="nb">text</span> <span class="k">NOT</span> <span class="k">NULL</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">ONLY</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">answers_pkey</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">answer</span><span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">ONLY</span> <span class="k">public</span><span class="p">.</span><span class="n">questions</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">questions_pkey</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">question_id</span><span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="k">ONLY</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">question_id_answers_fk</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">question_id</span><span class="p">)</span> <span class="k">REFERENCES</span> <span class="k">public</span><span class="p">.</span><span class="n">questions</span><span class="p">(</span><span class="n">question_id</span><span class="p">);</span>
+
+<span class="k">CREATE</span> <span class="k">SCHEMA</span> <span class="n">calc</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">OR</span> <span class="k">REPLACE</span> <span class="k">FUNCTION</span> <span class="n">calc</span><span class="p">.</span><span class="k">increment</span><span class="p">(</span><span class="n">i</span> <span class="nb">integer</span><span class="p">)</span> <span class="k">RETURNS</span> <span class="nb">integer</span> <span class="k">AS</span> <span class="err">$$</span>
+        <span class="k">BEGIN</span>
+                <span class="k">RETURN</span> <span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">;</span>
+        <span class="k">END</span><span class="p">;</span>
+<span class="err">$$</span> <span class="k">LANGUAGE</span> <span class="n">plpgsql</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">VIEW</span> <span class="n">calc</span><span class="p">.</span><span class="n">vista</span> <span class="k">AS</span> <span class="k">SELECT</span> <span class="err">$$</span><span class="n">I</span><span class="s1">'m in calc$$;
+
+CREATE VIEW public.vista AS SELECT $$I'</span><span class="n">m</span> <span class="k">in</span> <span class="k">public</span><span class="err">$$</span><span class="p">;</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">public</span><span class="p">.</span><span class="n">questions</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">question</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Jaki symbol chemiczny ma tlen?'</span><span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">is_correct</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Au'</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">is_correct</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'O'</span><span class="p">,</span> <span class="k">true</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">is_correct</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Oxy'</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="k">public</span><span class="p">.</span><span class="n">answers</span> <span class="p">(</span><span class="n">question_id</span><span class="p">,</span> <span class="n">answer</span><span class="p">,</span> <span class="n">is_correct</span><span class="p">)</span> <span class="k">VALUES</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="s1">'Tl'</span><span class="p">,</span> <span class="k">false</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>List the databases in the cluster:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\l</span>
+</code></pre></div></div>
+
+<p>Lists schemas (namespaces) in the current database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>n
+     List of schemas
+  Name  |     Owner
+<span class="nt">--------</span>+----------------
+ calc   | gustaw
+ public | azure_pg_admin
+<span class="o">(</span>2 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Check your current connection:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\c</span>onninfo
+You are connected to database <span class="s2">"quiz"</span> as user <span class="s2">"gustaw"</span> on host <span class="s2">"demo.postgres.database.azure.com"</span> <span class="o">(</span>address <span class="s2">"20.67.160.95"</span><span class="o">)</span> at port <span class="s2">"5432"</span><span class="nb">.</span>
+SSL connection <span class="o">(</span>protocol: TLSv1.3, cipher: TLS_AES_256_GCM_SHA384, bits: 256, compression: off<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Check what’s going on on your database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> TABLE pg_stat_activity<span class="p">;</span>
+</code></pre></div></div>
+
+<p>It’s unreadable, isn’t it? Change the display format:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\x</span> auto
+</code></pre></div></div>
+
+<p>And try to display the same view again:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SELECT <span class="k">*</span> FROM pg_stat_activity<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Display all relations (including tables, views, materialized views, indexes, sequences, or foreign tables) in your database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>
+                   List of relations
+ Schema |          Name           |   Type   |  Owner
+<span class="nt">--------</span>+-------------------------+----------+----------
+ public | answers                 | table    | postgres
+ public | answers_question_id_seq | sequence | postgres
+ public | questions               | table    | postgres
+ public | vista                   | view     | postgres
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Display all relations with their size and description:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>+
+                                 List of relations
+ Schema |          Name           |   Type   |  Owner   |    Size    | Description
+<span class="nt">--------</span>+-------------------------+----------+----------+------------+-------------
+ public | answers                 | table    | postgres | 16 kB      |
+ public | answers_question_id_seq | sequence | postgres | 8192 bytes |
+ public | questions               | table    | postgres | 16 kB      |
+ public | vista                   | view     | postgres | 0 bytes    |
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Display information about one, specific table:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>t+ pg_class
+</code></pre></div></div>
+
+<p>Display tables, which names start with “pg_c[…]”</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>t pg_c<span class="k">*</span>
+</code></pre></div></div>
+
+<p>Check out help information:</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\?</span>
+</code></pre></div></div>
+
+<p>Display the number of total connections to your database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SELECT count<span class="o">(</span><span class="k">*</span><span class="o">)</span> FROM pg_stat_activity<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Watch the change of the number over time:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\w</span>atch
+</code></pre></div></div>
+
+<p>Stop the process:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="o">[</span>Ctrl+c]
+</code></pre></div></div>
+
+<p>List all system views:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>vS
+</code></pre></div></div>
+
+<p>Turns displaying of how long each SQL statement takes on:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\t</span>iming
+</code></pre></div></div>
+
+<p>List the system functions:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>fS
+</code></pre></div></div>
+
+<p>Fetch and display the definition of the chosen function, in the form of a CREATE OR REPLACE FUNCTION command:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\s</span>f abs<span class="o">(</span>bigint<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Print psql’s command line history:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\s</span>
+</code></pre></div></div>
+
+<p>Search for a specific command in the history:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="o">[</span>Ctrl+r + part of the <span class="nb">command </span>string]
+</code></pre></div></div>
+
+
+        </section>
+    
+
+    
+        <section id="tls" class="h2">
+            
+                    <h2>Roles and Permissions</h2>
+                
+
+            <p>Connect to the PostgreSQL instance</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="o">[</span>postgres@localhost ~]<span class="nv">$ </span>psql
+psql <span class="o">(</span>11.5<span class="o">)</span>
+Type <span class="s2">"help"</span> <span class="k">for </span>help.
+
+<span class="nv">postgres</span><span class="o">=&gt;</span> 
+</code></pre></div></div>
+
+<p>Create new group</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE GROUP monty_python<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create a new user Graham that belongs to monty_python group and doesn’t inherit any privileges from the group. Allow the user to have maximum 2 active connection.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE USER Graham CONNECTION LIMIT 2 IN ROLE monty_python NOINHERIT<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create a new user Eric that belongs to monty_python group and inherits privileges from the group. Allow the user to have maximum 2 active connection.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> CREATE USER Eric CONNECTION LIMIT 2 IN ROLE monty_python INHERIT<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Display all the roles available in the cluster</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\d</span>g
+                                        List of roles
+   Role name    |                         Attributes                         |   Member of
+<span class="nt">----------------</span>+------------------------------------------------------------+----------------
+ eric           | 2 connections                                              | <span class="o">{</span>monty_python<span class="o">}</span>
+ graham         | No inheritance                                            +| <span class="o">{</span>monty_python<span class="o">}</span>
+                | 2 connections                                              |
+ monty_python   | Cannot login                                               | <span class="o">{}</span>
+ postgres       | Superuser, Create role, Create DB, Replication, Bypass RLS | <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>Connect to the quiz database</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">postgres</span><span class="o">=&gt;</span> <span class="se">\c</span> quiz
+</code></pre></div></div>
+
+<p>Grant all privileges for all tables in schema public to group monty_python</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> GRANT ALL ON ALL TABLES IN SCHEMA public TO monty_python<span class="p">;</span>
+GRANT
+</code></pre></div></div>
+
+<p>In order to be able to switch to another role you need to grant this permission to the current user:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>GRANT graham to adminuser<span class="p">;</span>
+GRANT graham to adminuser<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Switch to the Graham user</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO graham<span class="p">;</span>
+SET
+</code></pre></div></div>
+
+<p>Try to check the content of answers table as user Graham</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> TABLE answers<span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+</code></pre></div></div>
+
+<p>Change the user and try to query the table again</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO eric<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> table answers<span class="p">;</span>
+ question_id | answer | is_correct
+<span class="nt">-------------</span>+--------+------------
+           1 | Au     | f
+           1 | O      | t
+           1 | Oxy    | f
+           1 | Tl     | f
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Why user Graham doesn’t have permission to view the content of answer table?</p>
+
+<p>Changing permissions</p>
+
+<p>Grant the SELECT privilege on table answers to user Graham.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> GRANT SELECT ON TABLE answers TO Graham<span class="p">;</span>
+WARNING:  no privileges were granted <span class="k">for</span> <span class="s2">"answers"</span>
+GRANT
+</code></pre></div></div>
+
+<p>Switch back to the superuser account and try again.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO adminuser<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT SELECT ON TABLE answers TO Graham<span class="p">;</span>
+GRANT
+</code></pre></div></div>
+
+<p>Check if user Graham is able to query the table.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> TABLE answers<span class="p">;</span>
+ question_id | answer | is_correct
+<span class="nt">-------------</span>+--------+------------
+           1 | Au     | f
+           1 | O      | t
+           1 | Oxy    | f
+           1 | Tl     | f
+<span class="o">(</span>4 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Display all granted privileges.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>p
+                                     Access privileges
+ Schema |   Name    | Type  |       Access privileges       | Column privileges | Policies
+<span class="nt">--------</span>+-----------+-------+-------------------------------+-------------------+----------
+ public | answers   | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres+|                   |
+        |           |       | <span class="nv">graham</span><span class="o">=</span>r/postgres             |                   |
+ public | questions | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres |                   |
+<span class="o">(</span>2 rows<span class="o">)</span>
+</code></pre></div></div>
+
+<p>Granting roles
+As user Graham try to DELETE all records from table answers.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+</code></pre></div></div>
+
+<p>As adminuser copy all privileges from user eric to user graham.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\c</span>
+You are now connected to database <span class="s2">"quiz"</span> as user <span class="s2">"postgres"</span><span class="nb">.</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT eric TO graham <span class="p">;</span>
+GRANT ROLE
+</code></pre></div></div>
+
+<p>As user Graham try to DELETE all records from table answers.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="nb">set </span>role to graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+ERROR:  permission denied <span class="k">for </span>table answers
+<span class="nv">quiz</span><span class="o">=&gt;</span> SET ROLE TO adminuser<span class="p">;</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> GRANT DELETE ON TABLE answers TO graham<span class="p">;</span>
+GRANT
+<span class="nv">quiz</span><span class="o">=&gt;</span> SET role TO Graham<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> DELETE FROM answers <span class="p">;</span>
+</code></pre></div></div>
+
+<p>Display permissions granted to objects and information about roles.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>p
+                                     Access privileges
+ Schema |   Name    | Type  |       Access privileges       | Column privileges | Policies
+
+<span class="nt">--------</span>+-----------+-------+-------------------------------+-------------------+---------
+-
+ public | answers   | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres+|                   |
+        |           |       | <span class="nv">graham</span><span class="o">=</span>r/postgres            +|                   |
+        |           |       | <span class="nv">eric</span><span class="o">=</span>d/postgres               |                   |
+ public | questions | table | <span class="nv">postgres</span><span class="o">=</span>arwdDxt/postgres    +|                   |
+        |           |       | <span class="nv">monty_python</span><span class="o">=</span>arwdDxt/postgres |                   |
+<span class="o">(</span>2 rows<span class="o">)</span>
+
+<span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\d</span>g
+                                           List of roles
+   Role name    |                         Attributes                         |      Member of
+<span class="nt">----------------</span>+------------------------------------------------------------+---------------------
+ eric           | 2 connections                                              | <span class="o">{</span>monty_python<span class="o">}</span>
+ graham         | No inheritance                                            +| <span class="o">{</span>monty_python,eric<span class="o">}</span>
+                | 2 connections                                              |
+ monty_python   | Cannot login                                               | <span class="o">{}</span>
+ postgres       | Superuser, Create role, Create DB, Replication, Bypass RLS | <span class="o">{}</span>
+</code></pre></div></div>
+
+<p>Without INHERIT, membership in another role only grants the ability to SET ROLE to that other role; the privileges of the other role are only available after having done so.</p>
+
+<p>Revoke DELETE privilege from eric.</p>
+
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">quiz</span><span class="o">=&gt;</span> <span class="se">\c</span>
+You are now connected to database <span class="s2">"quiz"</span> as user <span class="s2">"adminuser"</span><span class="nb">.</span>
+<span class="nv">quiz</span><span class="o">=&gt;</span> REVOKE DELETE ON TABLE answers FROM eric<span class="p">;</span>
+REVOKE
+<span class="nv">quiz</span><span class="o">=&gt;</span> <span class="nb">set </span>role to eric<span class="p">;</span>
+SET
+<span class="nv">quiz</span><span class="o">=&gt;</span> delete from answers <span class="p">;</span>
+DELETE 0
+</code></pre></div></div>
+
+<p>As you see user Eric is still able to perform DELETE operation because of his membership in role monty_python.</p>
+
+        </section>
+    
+
+    
+        <section id="monitoring" class="h2">
+            
+                    <h2>Logical Backup</h2>
+                
+
+            <h3 id="plain-pg_dump">Plain pg_dump</h3>
+<p>Make sure you have sourced the file with libpq variables on your current session:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">source</span> .pg_azure
+</code></pre></div></div>
+
+<p>pg_dump like other native postgres utilities is able to use them to connect to your database instance.</p>
+
+<p>Run pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump
+</code></pre></div></div>
+
+<p>Run pg_dump against quiz database:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz
+</code></pre></div></div>
+
+<p>You can redirect the output of pg_dump to another program:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz|less
+</code></pre></div></div>
+
+<p>Save the output of pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz <span class="o">&gt;</span> /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Dump only the schema (without any data):</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--schema-only</span> quiz <span class="o">&gt;</span> /tmp/quiz_ddl.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_ddl.plain.dump
+</code></pre></div></div>
+
+<p>You don’t have to each time specify the database name, you can for instance overwrite PGDATABASE variable just for this session:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">export </span><span class="nv">PGDATABASE</span><span class="o">=</span>quiz 
+</code></pre></div></div>
+
+<p>Let’s dump only the data:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--data-only</span> <span class="o">&gt;</span> /tmp/quiz_data.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_data.plain.dump
+</code></pre></div></div>
+
+<p>Change the COPY command to INSERT:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--data-only</span> <span class="nt">--inserts</span> <span class="o">&gt;</span> /tmp/quiz_data_insert.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/quiz_data_insert.plain.dump
+</code></pre></div></div>
+
+<p>Dump only one table:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--table</span><span class="o">=</span>answers <span class="o">&gt;</span> /tmp/answers.plain.dump
+</code></pre></div></div>
+
+<p>Check the content of file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>less /tmp/answers.plain.dump
+</code></pre></div></div>
+
+<p>Check all the options for pg_dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump <span class="nt">--help</span>
+</code></pre></div></div>
+
+<h3 id="restore-from-plain-dump">Restore from plain dump</h3>
+<p>Drop database quiz:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dropdb quiz
+</code></pre></div></div>
+
+<p>Recreate it:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>createdb quiz
+</code></pre></div></div>
+
+<p>Restore it from your dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-f</span> /tmp/quiz.plain.dump
+</code></pre></div></div>
+
+<p>Watch out for errors!
+You might want to redirect errors to a separate file:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>psql <span class="nt">-f</span> /tmp/quiz.plain.dump 2&gt; errors.txt
+less errors.txt
+</code></pre></div></div>
+
+<p>Log in to psql and check if everything was properly restored.</p>
+
+<h3 id="directory-format">Directory format</h3>
+<p>Create dump using directory format. That is the only format where you can many parallel jobs to dump your database.</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dump quiz <span class="nt">-Fd</span> <span class="nt">-f</span> /tmp/directorydump
+</code></pre></div></div>
+
+<p>Check the content of files in the directory:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>zless /tmp/directorydump/<span class="k">*</span>dat.gz
+</code></pre></div></div>
+
+<h3 id="restore-from-directory-format-dump">Restore from directory format dump</h3>
+<p>Drop database quiz:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>dropdb quiz
+</code></pre></div></div>
+
+<p>Recreate it:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>createdb quiz
+</code></pre></div></div>
+
+<p>Restore it from your dump:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_restore <span class="nt">-d</span> quiz /tmp/directorydump
+</code></pre></div></div>
+
+<p>Log in to psql and check if everything was properly restored.</p>
+
+<h3 id="global-objects-dump">Global objects dump</h3>
+<p>Dump logically the whole instance:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dumpall <span class="o">&gt;</span> /tmp/whole_cluster.plain.dump
+less /tmp/whole_cluster.plain.dump
+</code></pre></div></div>
+
+<p>Dump only the global objects:</p>
+<div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code>pg_dumpall <span class="nt">-g</span> <span class="o">&gt;</span> /tmp/globals.plain.dump
+less /tmp/globals.plain.dump
+</code></pre></div></div>
+
+
+        </section>
+    
+
+    
+        <section id="SQLCharacteristic" class="h2">
+            
+                    <h2>SQL Characteristic</h2>
+                
+
+            <h3 id="partial-index">Partial Index</h3>
+<p>Let’s create a new table in quiz database and load it with some data:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">SCHEMA</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">SET</span> <span class="n">SEARCH_PATH</span> <span class="k">TO</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">games</span>
+<span class="p">(</span>
+    <span class="n">id</span>         <span class="nb">BIGINT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">GENERATED</span> <span class="k">BY</span> <span class="k">DEFAULT</span> <span class="k">AS</span> <span class="k">IDENTITY</span><span class="p">,</span>
+    <span class="n">start_time</span> <span class="nb">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="n">now</span><span class="p">(),</span>
+    <span class="n">end_time</span>   <span class="nb">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">players</span>    <span class="nb">INTEGER</span><span class="p">[]</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">winner</span>     <span class="nb">INTEGER</span><span class="p">,</span>
+    <span class="n">is_activ</span>   <span class="nb">BOOLEAN</span>            <span class="k">DEFAULT</span> <span class="k">TRUE</span>
+<span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">games</span> <span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">players</span><span class="p">,</span> <span class="n">winner</span><span class="p">,</span> <span class="n">is_activ</span><span class="p">)</span>
+<span class="k">SELECT</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="s1">'1 hour'</span><span class="p">,</span> <span class="p">(</span><span class="s1">'{'</span> <span class="o">||</span> <span class="n">n</span> <span class="o">||</span> <span class="s1">','</span> <span class="o">||</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">||</span> <span class="s1">'}'</span><span class="p">)::</span><span class="nb">INT</span><span class="p">[],</span> <span class="n">n</span><span class="p">,</span> <span class="k">TRUE</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span> <span class="n">n</span><span class="p">,</span>
+     <span class="n">generate_series</span><span class="p">(</span><span class="s1">'2021-01-01'</span><span class="p">::</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">now</span><span class="p">()::</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="s1">'1 day'</span><span class="p">::</span><span class="n">INTERVAL</span><span class="p">)</span> <span class="n">d</span>
+<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check how many rows were added:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Update some of the rows so is_activ field will have value FALSE for all the rows where start_time is different than today:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">UPDATE</span> <span class="n">games</span> <span class="k">SET</span> <span class="n">is_activ</span> <span class="o">=</span> <span class="k">FALSE</span> <span class="k">WHERE</span> <span class="n">start_time</span><span class="p">::</span><span class="nb">date</span> <span class="o">&lt;&gt;</span> <span class="k">CURRENT_DATE</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check how many of the rows have flag is_activ set to TRUE:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Run the same query 4-5 times again and check it’s execution time:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Were subsequent executions faster than the first and could you explain why?</p>
+
+<p>Let’s create a partial index using is_activ column:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">games</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check again how much time this query needs to be executed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="jsonb">JSONB</h3>
+<p>Create a table containing JSONB column and populate it with some data:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">products</span>
+<span class="p">(</span>
+    <span class="n">name</span>       <span class="nb">TEXT</span><span class="p">,</span>
+    <span class="n">attributes</span> <span class="n">JSONB</span>
+<span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">products</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+<span class="k">VALUES</span> <span class="p">(</span><span class="s1">'Leffe Blonde Ale'</span><span class="p">,</span>
+        <span class="s1">'{
+          "category": "Golden / Blonde Ale",
+          "region": "Belgium",
+          "ABV": 6.6
+        }'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Query the table using JSON operators:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">name</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">-&gt;</span> <span class="s1">'ABV'</span>
+<span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="n">name</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">-&gt;&gt;</span> <span class="s1">'ABV'</span>
+<span class="k">FROM</span> <span class="n">products</span>
+<span class="k">WHERE</span> <span class="n">attributes</span> <span class="o">-&gt;&gt;</span> <span class="s1">'region'</span> <span class="o">=</span> <span class="s1">'Belgium'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create the GIN index on the table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">products</span> <span class="k">USING</span> <span class="n">gin</span><span class="p">(</span><span class="n">attributes</span><span class="p">);</span>
+</code></pre></div></div>
+
+
+        </section>
+    
+
+    
+        <section id="backupandresotre" class="h2">
+            
+                    <h2>Physical Backup and Point in Time Restore</h2>
+                
+
+            <h3 id="backup">Backup</h3>
+<p>While creating a server through the Azure portal, the <strong>Pricing Tier</strong> window is where you select either <strong>Locally Redundant</strong> or <strong>Geographically Redundant</strong> backups for your server. This window is also where you select the <strong>Backup Retention Period</strong> - how long (in number of days) you want the server backups stored for.</p>
+
+<p><img src="media/azure_postgresql-backup.png" alt="Azure backup" /></p>
+
+<p>The backup retention period governs how far back in time a point-in-time restore can be retrieved, since it’s based on backups available. Point-in-time restore is described further in the following section.</p>
+
+<p><img src="media/azure_postgresql-backup-increase.png" alt="Azure backup" /></p>
+
+<h3 id="point-in-time-restore">Point-in-time restore</h3>
+
+<p>Azure Database for PostgreSQL allows you to restore the server back to a point-in-time and into to a new copy of the server. You can use this new server to recover your data, or have your client applications point to this new server.</p>
+
+<p>For example, if a table was accidentally dropped at noon today, you could restore to the time just before noon and retrieve the missing table and data from that new copy of the server. Point-in-time restore is at the server level, not at the database level.</p>
+
+<p>The following steps restore the sample server to a point-in-time:</p>
+
+<ul>
+  <li>
+    <p>In the Azure portal, select your Azure Database for PostgreSQL server.</p>
+  </li>
+  <li>
+    <p>In the toolbar of the server’s Overview page, select Restore.</p>
+  </li>
+</ul>
+
+<p><img src="media/azure_postgresql-restore.png" alt="Azure backup" /></p>
+
+<p><img src="media/azure_postgresql-restore2.png" alt="Azure backup" /></p>
+
+<p>The new server created by point-in-time restore has the same server admin login name and password that was valid for the existing server at the point-in-time chose. You can change the password from the new server’s Overview page.</p>
+
+<p>The new server created during a restore does not have the firewall rules or VNet service endpoints that existed on the original server. These rules need to be set up separately for this new server.</p>
+
+        </section>
+    
+
+    
+        <section id="Statistics" class="h2">
+            
+                    <h2>Statistics and Query Planning</h2>
+                
+
+            <h3 id="explain">EXPLAIN</h3>
+<p>Recreate the random_data table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">random_data</span>
+<span class="k">AS</span>
+<span class="k">SELECT</span> <span class="n">s</span>                           <span class="k">AS</span> <span class="n">first_column</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">(</span><span class="n">random</span><span class="p">()</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span>       <span class="k">AS</span> <span class="n">second_column</span><span class="p">,</span>
+       <span class="n">md5</span><span class="p">((</span><span class="n">random</span><span class="p">()</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span> <span class="p">::</span> <span class="nb">TEXT</span><span class="p">)</span> <span class="k">AS</span> <span class="n">third_column</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">500000</span><span class="p">)</span> <span class="n">s</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Run EXPLAIN command to see what’s the execution plan of ‘SELECT *’ query:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">TABLE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">68</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Check the statistics that Postgres currently has for random_data table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">relpages</span><span class="p">,</span> <span class="n">reltuples</span> <span class="k">FROM</span> <span class="n">pg_class</span> <span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">relpages</span> <span class="o">|</span> <span class="n">reltuples</span>
+<span class="c1">----------+-----------</span>
+        <span class="mi">0</span> <span class="o">|</span>         <span class="mi">0</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Run the VACUUM ANALYZE command against random_data and check the statisctics again:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">VACUUM</span> <span class="k">ANALYSE</span> <span class="n">random_data</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="n">relpages</span><span class="p">,</span> <span class="n">reltuples</span> <span class="k">FROM</span> <span class="n">pg_class</span> <span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="n">relpages</span> <span class="o">|</span> <span class="n">reltuples</span>
+<span class="c1">----------+-----------</span>
+     <span class="mi">6173</span> <span class="o">|</span>    <span class="mi">500000</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Check the EXPLAIN output again:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">TABLE</span> <span class="n">random_data</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Are the numbers more accurate?</p>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code>                             <span class="n">QUERY</span> <span class="n">PLAN</span>
+<span class="c1">---------------------------------------------------------------------</span>
+ <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11173</span><span class="p">.</span><span class="mi">00</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s calculate the cost as Postgres query planner does:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">relpages</span> <span class="o">*</span> <span class="n">current_setting</span><span class="p">(</span><span class="s1">'seq_page_cost'</span><span class="p">)::</span><span class="nb">numeric</span>
+           <span class="o">+</span> <span class="n">reltuples</span> <span class="o">*</span> <span class="n">current_setting</span><span class="p">(</span><span class="s1">'cpu_tuple_cost'</span><span class="p">)::</span><span class="nb">numeric</span>
+<span class="k">FROM</span> <span class="n">pg_class</span>
+<span class="k">WHERE</span> <span class="n">relname</span> <span class="o">=</span> <span class="s1">'random_data'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code> <span class="o">?</span><span class="k">column</span><span class="o">?</span>
+<span class="c1">----------</span>
+    <span class="mi">11173</span>
+<span class="p">(</span><span class="mi">1</span> <span class="k">row</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>As you can see that’s the same cost as shown in the EXPLAIN output;</p>
+
+<p>Let’s add a WHERE condition to the query:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">9971</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1940</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8777</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">808</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span>
+        <span class="n">Filter</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+</code></pre></div></div>
+
+<p>Let’s add ANALYZE to EXPLAIN clause:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYSE</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">9971</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1940</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">498</span><span class="p">..</span><span class="mi">727</span><span class="p">.</span><span class="mi">918</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8777</span><span class="p">.</span><span class="mi">17</span> <span class="k">rows</span><span class="o">=</span><span class="mi">808</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">004</span><span class="p">..</span><span class="mi">83</span><span class="p">.</span><span class="mi">350</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Filter</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+        <span class="k">Rows</span> <span class="n">Removed</span> <span class="k">by</span> <span class="n">Filter</span><span class="p">:</span> <span class="mi">166000</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">098</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">728</span><span class="p">.</span><span class="mi">032</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Now not only the plan was shown but also the query was executed.</p>
+
+<p>Create an index and see how the execution plan has changed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">random_data</span><span class="p">(</span><span class="n">first_column</span><span class="p">);</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span> <span class="k">SELECT</span> <span class="o">*</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">WHERE</span> <span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">012</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">330</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">107</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">421</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Why Index Scan not Index Only Scan was used?</p>
+
+<p>See the execution plan for a selfjoin:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Nested</span> <span class="n">Loop</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">..</span><span class="mi">5543</span><span class="p">.</span><span class="mi">32</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">025</span><span class="p">..</span><span class="mi">3</span><span class="p">.</span><span class="mi">809</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">016</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">422</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+  <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">2</span><span class="p">.</span><span class="mi">78</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">001</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">001</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1999</span><span class="p">)</span>
+        <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">331</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">3</span><span class="p">.</span><span class="mi">928</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Why Nested Loop was used?</p>
+
+<p>Check if planner has chosen the right plan by disabling the nested loop:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">ENABLE_NESTLOOP</span> <span class="k">TO</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1111</span><span class="p">.</span><span class="mi">13</span><span class="p">..</span><span class="mi">10352</span><span class="p">.</span><span class="mi">56</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">965</span><span class="p">..</span><span class="mi">114</span><span class="p">.</span><span class="mi">698</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Hash</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">111</span><span class="p">.</span><span class="mi">13</span><span class="p">..</span><span class="mi">9156</span><span class="p">.</span><span class="mi">86</span> <span class="k">rows</span><span class="o">=</span><span class="mi">815</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">35</span><span class="p">.</span><span class="mi">316</span><span class="p">..</span><span class="mi">67</span><span class="p">.</span><span class="mi">464</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Hash</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">random_data</span><span class="p">.</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">8256</span><span class="p">.</span><span class="mi">33</span> <span class="k">rows</span><span class="o">=</span><span class="mi">208333</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">011</span><span class="p">..</span><span class="mi">38</span><span class="p">.</span><span class="mi">918</span> <span class="k">rows</span><span class="o">=</span><span class="mi">166667</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Hash</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">786</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">787</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="n">Buckets</span><span class="p">:</span> <span class="mi">2048</span>  <span class="n">Batches</span><span class="p">:</span> <span class="mi">1</span>  <span class="n">Memory</span> <span class="k">Usage</span><span class="p">:</span> <span class="mi">216</span><span class="n">kB</span>
+              <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">038</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">442</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+                    <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">219</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">114</span><span class="p">.</span><span class="mi">823</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Disable also Hash Joins:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">ENABLE_HASHJOIN</span> <span class="k">TO</span> <span class="k">OFF</span><span class="p">;</span>
+
+<span class="k">EXPLAIN</span> <span class="k">ANALYZE</span>
+<span class="k">SELECT</span> <span class="n">t5</span><span class="p">.</span><span class="o">*</span>
+<span class="k">FROM</span> <span class="n">random_data</span>
+         <span class="k">JOIN</span> <span class="n">random_data</span> <span class="n">t5</span> <span class="k">USING</span> <span class="p">(</span><span class="n">first_column</span><span class="p">)</span>
+<span class="k">WHERE</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Gather</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">1000</span><span class="p">.</span><span class="mi">85</span><span class="p">..</span><span class="mi">11896</span><span class="p">.</span><span class="mi">00</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">446</span><span class="p">..</span><span class="mi">287</span><span class="p">.</span><span class="mi">762</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Workers</span> <span class="n">Planned</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="n">Workers</span> <span class="n">Launched</span><span class="p">:</span> <span class="mi">2</span>
+  <span class="o">-&gt;</span>  <span class="n">Merge</span> <span class="k">Join</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">84</span><span class="p">..</span><span class="mi">10700</span><span class="p">.</span><span class="mi">30</span> <span class="k">rows</span><span class="o">=</span><span class="mi">815</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">13</span><span class="p">.</span><span class="mi">313</span><span class="p">..</span><span class="mi">16</span><span class="p">.</span><span class="mi">500</span> <span class="k">rows</span><span class="o">=</span><span class="mi">666</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">Merge</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">random_data</span><span class="p">.</span><span class="n">first_column</span> <span class="o">=</span> <span class="n">t5</span><span class="p">.</span><span class="n">first_column</span><span class="p">)</span>
+        <span class="o">-&gt;</span>  <span class="n">Parallel</span> <span class="k">Index</span> <span class="k">Only</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">10079</span><span class="p">.</span><span class="mi">76</span> <span class="k">rows</span><span class="o">=</span><span class="mi">208333</span> <span class="n">width</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">12</span><span class="p">.</span><span class="mi">803</span><span class="p">..</span><span class="mi">12</span><span class="p">.</span><span class="mi">873</span> <span class="k">rows</span><span class="o">=</span><span class="mi">667</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="n">Heap</span> <span class="n">Fetches</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="o">-&gt;</span>  <span class="k">Index</span> <span class="n">Scan</span> <span class="k">using</span> <span class="n">random_data_first_column_idx</span> <span class="k">on</span> <span class="n">random_data</span> <span class="n">t5</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">42</span><span class="p">..</span><span class="mi">86</span><span class="p">.</span><span class="mi">67</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1957</span> <span class="n">width</span><span class="o">=</span><span class="mi">70</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">085</span><span class="p">..</span><span class="mi">0</span><span class="p">.</span><span class="mi">552</span> <span class="k">rows</span><span class="o">=</span><span class="mi">1999</span> <span class="n">loops</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+              <span class="k">Index</span> <span class="n">Cond</span><span class="p">:</span> <span class="p">(</span><span class="n">first_column</span> <span class="o">&lt;</span> <span class="mi">2000</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">255</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">287</span><span class="p">.</span><span class="mi">901</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Which algorithm was the fastest for this query and why?</p>
+
+<h3 id="work_mem-setting">work_mem Setting</h3>
+<p>Run EXPLAIN command to see what’s the execution plan of the SELECT query that requires sorting:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">EXPLAIN</span> <span class="k">ANALYSE</span> <span class="k">SELECT</span> <span class="n">second_column</span> <span class="k">FROM</span> <span class="n">random_data</span> <span class="k">ORDER</span> <span class="k">BY</span> <span class="mi">1</span> <span class="k">DESC</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Output:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sort</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">73824</span><span class="p">.</span><span class="mi">53</span><span class="p">..</span><span class="mi">75136</span><span class="p">.</span><span class="mi">30</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">10705</span><span class="p">.</span><span class="mi">361</span><span class="p">..</span><span class="mi">14201</span><span class="p">.</span><span class="mi">555</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Sort</span> <span class="k">Key</span><span class="p">:</span> <span class="n">second_column</span> <span class="k">DESC</span>
+  <span class="n">Sort</span> <span class="k">Method</span><span class="p">:</span> <span class="k">external</span> <span class="n">merge</span>  <span class="n">Disk</span><span class="p">:</span> <span class="mi">21096</span><span class="n">kB</span>
+  <span class="o">-&gt;</span>  <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">018</span><span class="p">..</span><span class="mi">808</span><span class="p">.</span><span class="mi">240</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">087</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">14378</span><span class="p">.</span><span class="mi">488</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>As you see external merge was used as a sort method. It means that your data were sorted on the disk. This is because work_mem value was to small to sort the data in memory.</p>
+
+<p>Check the current value of work_mem:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SHOW</span> <span class="n">work_mem</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>How much memory do you need to sort the data in RAM?</p>
+
+<p>You can change the work_mem value just for the session to try it out. Set the proper value and try to rerun the query.</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SET</span> <span class="n">work_mem</span> <span class="o">=</span> <span class="s1">'10MB'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>After chosing the right work_mem value you will see that execution plan has changed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">Sort</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">61270</span><span class="p">.</span><span class="mi">03</span><span class="p">..</span><span class="mi">62581</span><span class="p">.</span><span class="mi">80</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">11884</span><span class="p">.</span><span class="mi">004</span><span class="p">..</span><span class="mi">12146</span><span class="p">.</span><span class="mi">057</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+  <span class="n">Sort</span> <span class="k">Key</span><span class="p">:</span> <span class="n">second_column</span> <span class="k">DESC</span>
+  <span class="n">Sort</span> <span class="k">Method</span><span class="p">:</span> <span class="n">quicksort</span>  <span class="n">Memory</span><span class="p">:</span> <span class="mi">51351</span><span class="n">kB</span>
+  <span class="o">-&gt;</span>  <span class="n">Seq</span> <span class="n">Scan</span> <span class="k">on</span> <span class="n">random_data</span>  <span class="p">(</span><span class="n">cost</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">00</span><span class="p">..</span><span class="mi">11420</span><span class="p">.</span><span class="mi">05</span> <span class="k">rows</span><span class="o">=</span><span class="mi">524705</span> <span class="n">width</span><span class="o">=</span><span class="mi">32</span><span class="p">)</span> <span class="p">(</span><span class="n">actual</span> <span class="nb">time</span><span class="o">=</span><span class="mi">0</span><span class="p">.</span><span class="mi">013</span><span class="p">..</span><span class="mi">579</span><span class="p">.</span><span class="mi">455</span> <span class="k">rows</span><span class="o">=</span><span class="mi">500000</span> <span class="n">loops</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">Planning</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">0</span><span class="p">.</span><span class="mi">051</span> <span class="n">ms</span>
+<span class="n">Execution</span> <span class="nb">Time</span><span class="p">:</span> <span class="mi">12206</span><span class="p">.</span><span class="mi">274</span> <span class="n">ms</span>
+</code></pre></div></div>
+
+<p>Now quicksort Memory was used instead of external merge. Why more memory is needed for the same sort operation in memory than on the disk?</p>
+
+
+        </section>
+    
+
+    
+        <section id="sql" class="h1">
+            
+                    
+                    <h1>SQL</h1>
+                    
+                
+
+            
+
+        </section>
+    
+
+    
+        <section id="powerbi" class="h1">
+            
+                    
+                    <h1>Power BI</h1>
+                    
+                
+
+            
+
+        </section>
+    
+
+
+            </article>
+        </div>
+    </div>
+
+    <script scr="js/jquery.scrollTo.js"></script>
+    <script src="js/jquery.nav.js"></script>
+    <script src="js/scripts.js"></script>
+
+</body>
+
+</html>

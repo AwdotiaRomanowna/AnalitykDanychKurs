@@ -1,0 +1,80 @@
+I"#<h3 id="partial-index">Partial Index</h3>
+<p>Let’s create a new table in quiz database and load it with some data:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">SCHEMA</span> <span class="n">IF</span> <span class="k">NOT</span> <span class="k">EXISTS</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">SET</span> <span class="n">SEARCH_PATH</span> <span class="k">TO</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">DROP</span> <span class="k">TABLE</span> <span class="n">IF</span> <span class="k">EXISTS</span> <span class="n">games</span><span class="p">;</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">games</span>
+<span class="p">(</span>
+    <span class="n">id</span>         <span class="nb">BIGINT</span> <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="k">GENERATED</span> <span class="k">BY</span> <span class="k">DEFAULT</span> <span class="k">AS</span> <span class="k">IDENTITY</span><span class="p">,</span>
+    <span class="n">start_time</span> <span class="nb">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span> <span class="k">DEFAULT</span> <span class="n">now</span><span class="p">(),</span>
+    <span class="n">end_time</span>   <span class="nb">TIMESTAMP</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">players</span>    <span class="nb">INTEGER</span><span class="p">[]</span> <span class="k">NOT</span> <span class="k">NULL</span><span class="p">,</span>
+    <span class="n">winner</span>     <span class="nb">INTEGER</span><span class="p">,</span>
+    <span class="n">is_activ</span>   <span class="nb">BOOLEAN</span>            <span class="k">DEFAULT</span> <span class="k">TRUE</span>
+<span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">games</span> <span class="p">(</span><span class="n">start_time</span><span class="p">,</span> <span class="n">end_time</span><span class="p">,</span> <span class="n">players</span><span class="p">,</span> <span class="n">winner</span><span class="p">,</span> <span class="n">is_activ</span><span class="p">)</span>
+<span class="k">SELECT</span> <span class="n">d</span><span class="p">,</span> <span class="n">d</span> <span class="o">+</span> <span class="s1">'1 hour'</span><span class="p">,</span> <span class="p">(</span><span class="s1">'{'</span> <span class="o">||</span> <span class="n">n</span> <span class="o">||</span> <span class="s1">','</span> <span class="o">||</span> <span class="n">n</span> <span class="o">+</span> <span class="mi">4</span> <span class="o">||</span> <span class="s1">'}'</span><span class="p">)::</span><span class="nb">INT</span><span class="p">[],</span> <span class="n">n</span><span class="p">,</span> <span class="k">TRUE</span>
+<span class="k">FROM</span> <span class="n">generate_series</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">10000</span><span class="p">)</span> <span class="n">n</span><span class="p">,</span>
+     <span class="n">generate_series</span><span class="p">(</span><span class="s1">'2021-01-01'</span><span class="p">::</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="n">now</span><span class="p">()::</span><span class="nb">TIMESTAMP</span><span class="p">,</span> <span class="s1">'1 day'</span><span class="p">::</span><span class="n">INTERVAL</span><span class="p">)</span> <span class="n">d</span>
+<span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check how many rows were added:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Update some of the rows so is_activ field will have value FALSE for all the rows where start_time is different than today:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">UPDATE</span> <span class="n">games</span> <span class="k">SET</span> <span class="n">is_activ</span> <span class="o">=</span> <span class="k">FALSE</span> <span class="k">WHERE</span> <span class="n">start_time</span><span class="p">::</span><span class="nb">date</span> <span class="o">&lt;&gt;</span> <span class="k">CURRENT_DATE</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check how many of the rows have flag is_activ set to TRUE:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Run the same query 4-5 times again and check it’s execution time:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Were subsequent executions faster than the first and could you explain why?</p>
+
+<p>Let’s create a partial index using is_activ column:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">games</span><span class="p">(</span><span class="n">id</span><span class="p">)</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Check again how much time this query needs to be executed:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="k">count</span><span class="p">(</span><span class="o">*</span><span class="p">)</span> <span class="k">FROM</span> <span class="n">games</span> <span class="k">WHERE</span> <span class="n">is_activ</span><span class="p">;</span>
+</code></pre></div></div>
+
+<h3 id="jsonb">JSONB</h3>
+<p>Create a table containing JSONB column and populate it with some data:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">products</span>
+<span class="p">(</span>
+    <span class="n">name</span>       <span class="nb">TEXT</span><span class="p">,</span>
+    <span class="n">attributes</span> <span class="n">JSONB</span>
+<span class="p">);</span>
+
+<span class="k">INSERT</span> <span class="k">INTO</span> <span class="n">products</span> <span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">attributes</span><span class="p">)</span>
+<span class="k">VALUES</span> <span class="p">(</span><span class="s1">'Leffe Blonde Ale'</span><span class="p">,</span>
+        <span class="s1">'{
+          "category": "Golden / Blonde Ale",
+          "region": "Belgium",
+          "ABV": 6.6
+        }'</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>Query the table using JSON operators:</p>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">SELECT</span> <span class="n">name</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">-&gt;</span> <span class="s1">'ABV'</span>
+<span class="k">FROM</span> <span class="n">products</span><span class="p">;</span>
+
+<span class="k">SELECT</span> <span class="n">name</span><span class="p">,</span> <span class="n">attributes</span> <span class="o">-&gt;&gt;</span> <span class="s1">'ABV'</span>
+<span class="k">FROM</span> <span class="n">products</span>
+<span class="k">WHERE</span> <span class="n">attributes</span> <span class="o">-&gt;&gt;</span> <span class="s1">'region'</span> <span class="o">=</span> <span class="s1">'Belgium'</span><span class="p">;</span>
+</code></pre></div></div>
+
+<p>Create the GIN index on the table:</p>
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">CREATE</span> <span class="k">INDEX</span> <span class="k">ON</span> <span class="n">products</span> <span class="k">USING</span> <span class="n">gin</span><span class="p">(</span><span class="n">attributes</span><span class="p">);</span>
+</code></pre></div></div>
+
+:ET
